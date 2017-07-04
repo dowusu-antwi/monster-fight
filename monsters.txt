@@ -1,0 +1,33 @@
+#Monsters	name,type: health,special loot
+
+zombie: 					11, 				brain matter,			grub
+lion: 						10, 				mane hair
+panther: 					9, 				panther claw
+giant man-eating plant:			 	10, 				plant leaf
+manticore:					20,				manticore paw
+pegasus:					25,				pegasus feather
+hippogriff:					25,				hippogriff feather
+sphinx:						25,				enchanted fur coat
+giant five-fingered claw:			30,				giant claw
+unicorn:					50,				unicorn horn
+goblin: 					30, 				goblin finger
+snerson: 					50, 				snerson fang
+dragon: 					80,				scales,					dragon fang
+carnivorous frog: 				35,				frog slime
+giant tarantula:				30,				eye of tarantula
+why wolf:					50,				why wolf glasses
+thunderbird:					75,				thunder feather,		lightning claw
+
+#MONSTER FIGHT
+#- getWeaponList, textfile
+#-flee() for each class
+#- make captur() fn
+#- fuseItems() fn for fighter
+#- mod pickUpLoot to print items
+
+#- story text in other file
+#- each monster, speaking text (in other file)
+#- update storyline/voice of narrator
+
+#- graphs to match monsters w/ weapons
+#- pygame

@@ -1,0 +1,22 @@
+#Food/Drink,		name, health restoration
+grub,1
+beans,2
+monster meat,3
+fruit,2
+spring water,5
+
+#Armor#			name: [shield power, weight]
+steel armor: [2,3]
+iron armor: [3,5]
+gold armor: [4,6]
+diamond armor: [6,5]
+
+#Weapons		name: [attack power, tries/turn]
+knife: [1,4]
+staff: [1,2]
+dagger: [2,4]
+bow and arrow: [2,3]
+sword: [4,2]
+axe: [5,1]
+long sword: [6,2]
+eternal butter knife: [20,2]

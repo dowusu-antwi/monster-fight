@@ -1,5 +1,8 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+
 """
+Monster Fight Game
+
 Created on Wed Feb 24 15:20:00 2016
 
 @author: dowusu
@@ -8,6 +11,7 @@ Created on Wed Feb 24 15:20:00 2016
 import random
 import time
 from sys import stdout
+
 #initialize dict of weapons, values: [hitpoint, tries]
 WEAPONS = {'sword': [3,2], 'axe': [4,2], 'bow and arrow': [3,4], 'dagger': [2,4], 'bo staff':[1,5]} #'HAND-TO-HAND': [1,1] 
 
@@ -20,6 +24,8 @@ def quickPrint(string,state=0):
     Simulates classic video game message output.
     
     can take input string of raw_input (''), make state True
+    
+    FIX PRINTING ON SAME LINE, CHARACTER AT A TIME
     """
     #figure out a way dependent on actual time
     #   rather than time based on processing speed
@@ -30,18 +36,21 @@ def quickPrint(string,state=0):
                 charInd = string.index(char)
                 if string[charInd+1] == '.' or string[charInd-1] == '.':
                     stdout.write(char)
-                    time.sleep(0.5)  
+		    stdout.flush()
+                    time.sleep(0.05)  
                 else:                      
                     stdout.write(char)
-                    time.sleep(1)
+                    time.sleep(0.05)
             except IndexError:
                 stdout.write(char)
-                time.sleep(1)    
+		stdout.flush()
+                time.sleep(0.5)    
         elif char.lower() not in 'abcdefghijklmnopqrstuvwxyz':
             stdout.write(char)
         else:
             time.sleep(0.05)          
             stdout.write(char)
+	    stdout.flush()
     if char == string[len(string)-1]:
         stdout.flush()
         if state:
@@ -281,28 +290,31 @@ class Fighter(Creature):
             for loot in mod_ans:
                 if loot not in loot_names:
                     correct = False
-                    ans = quickPrint("You fool! " + str(loot).upper() + " is not one of the available items! Input available items. (Enter loot item numbers separated by commas (',') or 'NONE' if you don't want any loot): ",1)
+                    ans = quickPrint("You fool! " + str(loot).upper() + " is not one of the available items! Input available items. (Enter loot items separated by commas (',') or 'NONE' if you don't want any loot): ",1)
                     break
                 else:
-                    correct = True
-                    if loot in self.inventory:
+		    # modify user's inventory and return dict
+ 	
+                    if loot in keys(user_loot):
                         user_loot[loot] += monster_loot_dict[loot]
-                        quickPrint('You have picked up ' + str(loot).upper())
                     # else, add monster.loot key-val pairs to user.loot dict
                     else:
-                        user_loot[loot] = monster_loot_dict[loot]            
-            # modify user's inventory and return dict
-            if correct:
-                self.inventory = user_loot
-                return self.inventory
-            else:
-                pass
-        # user decides against any loot, return current inventory
-        quickPrint("You leave the loot to rot. Hopefully you already have what you need.")
+                        user_loot[loot] = monster_loot_dict[loot]  
+            	    
+		    quickPrint('You have picked up ' + str(loot).upper())          
+	
+		# updates user's inventor, returns inventory dict	
+		self.inventory = user_loot
+		return self.inventory
+ 
+         # user decides against any loot, return current inventory
+        quickPrint("You leave the loot to rot. Hopefully, you already possess what you will need...")
         return self.inventory
     def tameMonster(monster):
         """
         Allows Fighter to capture weak Monster and make it a companion
+	- Adds monster to INVENTORY
+	- Changes monster class instance to make WEAPON (of sorts)
         """
         pass
     def fuseItems(monster,weapon):
@@ -391,6 +403,18 @@ class Fusion(Creature):
         self.power = monster.power + weapon.hitpoints
                 
 #-------initialize monster fight game
+def readNarrative(lines):
+	"""
+	Read array of narrative lines
+	Print out to dislplay using (mod?)  quickPrint()
+
+	lines: array of strings to read dynamically
+	e.g.	(...) > wait for 3 Sec
+		! ! ! > wait for 1 Sec
+		etc. ...
+	"""
+	pass
+
 def playGame():
     # include self healing factor (based on time)
     # add items to inventory, include other WEAPONS
@@ -444,5 +468,5 @@ def playGame():
                 break
             else:
                 quickPrint("You imbecile! A true warrior follows directions!")
-                ans = quickPrint("Would you like to leave Monster Fight? (yes/no)",1)                
+                ans = quickPrint("Would you like to leave Monster Fight? (yes/no): ",1)                
 playGame()

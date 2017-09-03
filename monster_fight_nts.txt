@@ -1,0 +1,3 @@
+#MONSTER FIGHT NOTES
+-- Show user weapon stats
+-- Add probabilities of monster encounters

@@ -1,3 +1,16 @@
 #MONSTER FIGHT NOTES
--- Show user weapon stats
+
+Add
+-- Show user weapon stats --------- x
 -- Add probabilities of monster encounters
+-- Use user's name consistently
+-- Monster stats, factor into difficulty of direct hit/strength of hit
+-- If incorrect loot put in, add correct input loot and display remaining loot (so that making 1 mistake doesn't require complete redo of inputs)
+
+Fix
+-- If multiple incorrect inputs, say so (for loot pickup)
+-- Notify user of items picked up ----- x
+-- Collect comma-separated items ------ x
+-- organize with tabs loot amounts
+-- Don't take any input while typing (i.e. flush std)
+

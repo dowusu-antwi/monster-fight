@@ -38,7 +38,11 @@ def quickPrint(string,state=0):
                     stdout.write(char)
 		    stdout.flush()
                     time.sleep(0.05)  
-                else:                      
+                elif string[charInd-1] == '.' and string[charInd-2] == '.':
+		    stdout.write(char)
+		    time.sleep(1.5) 
+		    stdout.flush()
+		else:                      
                     stdout.write(char)
                     time.sleep(0.05)
             except IndexError:
@@ -158,8 +162,12 @@ class Fighter(Creature):
         Creature.__init__(self,name,health,power,speed)        
         # weapon is object       
         self.start_heath = self.health        
-        self.weapon = self.chooseWeapon(WEAPONS)
-        self.inventory = {}
+        weapon = self.chooseWeapon(WEAPONS)
+        inventory = {}
+	inventory["WEAPON: " + weapon.name.upper()] = "--> Hitpoints: " + str(weapon.hitpoints) + " Tries: " + str(float(weapon.tries))
+	self.weapon = weapon
+	self.inventory = inventory
+	
     def __str__(self):
         return "NAME: " + self.name + " WEAPON:" + str(self.weapon)
     def chooseWeapon(self,weapons):
@@ -173,7 +181,7 @@ class Fighter(Creature):
         while(True):
             weapon_choices = weapons.keys()
             try:
-                ans = quickPrint("Choose your weapon, warrior: " + str(weapon_choices) + "--> ",1)
+                ans = quickPrint("Choose your weapon, " + self.name + ": " + str(weapon_choices) + "--> ",1)
                 if ans in weapons.keys():
                     quickPrint("You have chosen the " + ans.upper() + ". A valiant choice, warrior.")
                     break
@@ -216,7 +224,7 @@ class Fighter(Creature):
                     quickPrint("A direct hit! The " + str(opponent.name) + " now has health " + str(opponent_health) + ".")
                     opponent.health = opponent_health
                 else:
-                    quickPrint("You have killed the " + str(opponent.name) + ".")
+                    quickPrint("A fatal blow! You have killed the " + str(opponent.name) + ".")
                     opponent.health = 0
                     opponent.alive = False
                     break
@@ -250,9 +258,10 @@ class Fighter(Creature):
                          quickPrint("You carry only your will and your wits about you. Your INVENTORY is empty.")
                     else:
                         print("INVENTORY:")
-                    for item in self.inventory:
-                        quickPrint("  " + item + "\t" + str(self.inventory[item]))
-                    quickPrint("Use your items wisely. Now, continue on your quest!")
+			print "Loot\t\t\t\tAmount"
+                    	for item in self.inventory:
+                        	quickPrint("  " + item + "\t" + str(self.inventory[item]))
+                    	quickPrint("Use your items wisely. Now, continue on your quest!")
                 elif check_inven == 'no':
                     quickPrint("Then you shall continue on...")
                     break
@@ -268,48 +277,85 @@ class Fighter(Creature):
         """        
         quickPrint("Available Loot: ")
         monster_loot_dict = monster.getLoot()
-        loot_names = monster_loot_dict.keys()
+        valid_loot_names = monster_loot_dict.keys()
         loot_vals = monster_loot_dict.values()
-        print "Loot\t\t\t\tAmount"
+        print "Loot\t\t\t\t\tAmount"
         count = 1        
         # PRINT OUT AMOUNT OF LOOT AT TABBED SPACE BASED ON LENGTH OF MONSTER NAME
-        for name in loot_names:
-            quickPrint(str(count) + '. ' + name + "\t\t\t" + str(loot_vals[count-1]))
+        for name in valid_loot_names:
+            quickPrint(str(count) + '. ' + name + "\t\t\t\t" + str(loot_vals[count-1]))
             count += 1
         # ask user for loot preference
-        ans = quickPrint("Which of the items would you like to pick up? (Enter loot items separated by commas (',') or 'NONE' if you don't want any loot): ",1)
-        while ans != 'none':    
-            # check if user is putting in wrong loot            
-            mod_ans = ans.strip()
-            mod_ans = mod_ans.split(',')
-            for loot in mod_ans:
-                mod_ans[mod_ans.index(loot)] = loot.strip()
-            user_loot = self.inventory;
-            # check if user has any of loot
-            # if user has loot, add monster.loot vals to existing user.loot key-value pair
-            for loot in mod_ans:
-                if loot not in loot_names:
-                    correct = False
-                    ans = quickPrint("You fool! " + str(loot).upper() + " is not one of the available items! Input available items. (Enter loot items separated by commas (',') or 'NONE' if you don't want any loot): ",1)
-                    break
-                else:
-		    # modify user's inventory and return dict
- 	
-                    if loot in keys(user_loot):
-                        user_loot[loot] += monster_loot_dict[loot]
-                    # else, add monster.loot key-val pairs to user.loot dict
-                    else:
-                        user_loot[loot] = monster_loot_dict[loot]  
-            	    
-		    quickPrint('You have picked up ' + str(loot).upper())          
-	
-		# updates user's inventor, returns inventory dict	
-		self.inventory = user_loot
-		return self.inventory
+        ans = quickPrint("Which of the items would you like to pick up? (Enter loot items separated by commas (',') "
+			 "or 'NONE' if you don't want any loot or 'ALL' if you want all loot): ",1)
+        user_loot = self.inventory
+	inventory_filled = False
+	while ans != 'none':
+	    # check if user is putting in wrong loot            
+            if ans != 'all':
+	    	mod_ans = ans.strip()
+            	mod_ans = mod_ans.split(',')
+	    		
+		# Validates loot names before adding to inventory
+		valid_loot = True
+		invalid_inds = []
+		for loot in mod_ans:
+			print("Validating  "+loot.strip()+" of "+str(len(mod_ans))+ " items...")
+	                if loot not in valid_loot_names:
+               			valid_loot = False
+				current_ind = mod_ans.index(loot)
+				invalid_inds.append(current_ind)
+			# Removes whitespace in loot names
+			loot = loot.strip()
+			mod_ans[current_ind] = loot
+
+		# Adds valid loot names to inventory
+		if valid_loot:
+			print("Preparing  "+loot+"...")
+		    	# modify user's inventory and return dict
+		   	print("Modifying user's inventory: ") 	
+                    	if loot in user_loot.keys():
+                        	user_loot[loot] += monster_loot_dict[loot]
+				quickPrint("You have picked up extra " + str(loot).upper())
+                    	# else, add monster.loot key-val pairs to user.loot dict
+                    	else:
+                    	   	user_loot[loot] = monster_loot_dict[loot]  
+		    		quickPrint('You have picked up ' + str(loot).upper())          
+			inventory_filled = True 
+		else:
+			invalid_loot = ""
+			count = 0
+			for ind in invalid_inds:
+				invalid_loot = invalid_loot + str(mod_ans[ind]) + ", "
+				count += 1
+			invalid_loot = invalid_loot[0:len(invalid_loot)-2]
+			if count != 1:
+				interject = "are"
+			else:	
+				interject = "is"
+			ans = quickPrint("You fool! " + invalid_loot.upper() + " " + interject + " not available for pickup! "
+					 "(Enter loot items separated by commas (',') or 'NONE' if you don't want any loot): ",1)
+	    elif ans == "all":
+		for loot in monster_loot_dict.keys():
+			if loot in user_loot.keys():
+				user_loot[loot] += monster_loot_dict[loot]
+				quickPrint("You have picked up extra " + str(loot).upper())	
+			else:
+				user_loot[loot] = monster_loot_dict[loot]
+				quickPrint("You have picked up " + str(loot).upper())
+		inventory_filled = True
+	    else:
+		ans = quickPrint("You imbecile! A true warrior follows directions...",1)
+  	    
+	    if inventory_filled:
+	    	# updates user's inventor, returns inventory dict	
+	    	self.inventory = user_loot
+   	    	return self.inventory
  
-         # user decides against any loot, return current inventory
+        # user decides against any loot, return current inventory
         quickPrint("You leave the loot to rot. Hopefully, you already possess what you will need...")
         return self.inventory
+    
     def tameMonster(monster):
         """
         Allows Fighter to capture weak Monster and make it a companion

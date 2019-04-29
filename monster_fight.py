@@ -471,7 +471,7 @@ def playGame():
     quickPrint("To take on such a challenge...")
     name = quickPrint("You must be a brave warrior. What is your name, warrior? ",1)
     quickPrint(name.upper() + "? ...A fool's name. But you will fight to give it worth.")    
-    user = Fighter(name.upper(),1000,30,3) #name,health,power,speed
+    user = Fighter(name.upper(),80,30,5) #name,health,power,speed
     while(user.alive):
         monsterList = getMonsterList('monsters.txt')
         monster = getRandMonster(monsterList)
